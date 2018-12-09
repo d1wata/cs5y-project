@@ -8,9 +8,10 @@ class Tabletop:
     self.__playerCount = 0
     self.__currPlayer = None
     self.__lastPlayer = None
+    self.__pile = None
 
   def newGame(self):
-    pass  
+    self.__pile = Pile()  
   
   def newPlayer(self):
     self.__playerCount += 1
@@ -28,9 +29,35 @@ class Tabletop:
     
       person = Player(self.__playerCount - 1)
       person.setNext()
+      
+  def isEmpty(self):
+    if self.__firstPlayer is None and self.__lastPlayer is None:
+      return True
+    else:
+      return False
     
+  def __len__(self):
+    curr = self.__firstPlayer
+		count = 0
+    if self.__firstPlayer is None:
+      return count
+		while curr != self.__lastPlayer:
+			curr = curr.getNext()
+			count+=1
+		return count+1 
+      
   def startDeal(self):
-    pass
+    if self.isEmpty() or len(Tabletop) < 2:
+      print("Not Enough Players")
+    else:
+      player = self.__firstPlayer
+      player.newHand(self.__pile)
+      
+      while player is not None:
+        player.getNext()
+        player.newHand(self.__pile)
+        
+    print("Hands Dealt")
 
 
 class Player:
@@ -44,6 +71,12 @@ class Player:
   
   def setNext(self):
     self.__next = self.__playerNumber + 1
+    
+  def getNext(self):
+    if self.__next is not None:
+      return self.__next
+    else:
+      return
     
   def showCards(self):
     for i in self.__cards:
