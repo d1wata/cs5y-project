@@ -1,3 +1,6 @@
+from enum import Enum
+from random import shuffle
+
 class Tabletop:
 
   def __init__(self):
@@ -37,9 +40,14 @@ class Player:
     self.__score = 0
     self.__prev = number - 1
     self.__next = None
+    self.__cards = []
   
   def setNext(self):
     self.__next = self.__playerNumber + 1
+    
+  def showCards(self):
+    for i in self.__cards:
+      print(str(i))
   
   def getScore(self):
     return self.__score
@@ -48,12 +56,87 @@ class Player:
     return self.__playerNumber
 
   def newHand(self, varPile):
-    pass
+    for i in range(3):
+      self.__cards.append(varPile.take())
+      self.__score += self.__cards[-1].value
 
-  def drawCard(self, varPile):
-    pass
-
-class Pile:
+  def drawCard(self, varPile, throwIndex):
+    self.__score -= self.__cards[throwIndex].value
+    del self.__cards[throwIndex]
+    self.__cards.append(varPile.take())
+    self.__score += self.__cards[-1].value
+    
   
-  def __init__(self):
-    pass
+  
+class Pile:
+    def __init__(self):
+        self.__cards = [
+            Card(value, suit) for value in CardValue for suit in CardSuit
+        ]
+        shuffle(self.__cards)
+    
+    def take(self):
+      self.__cards.pop()
+      
+    def newPile(self):
+      for i in self.__cards
+        self.__cards.pop()
+      
+      self.__cards = [
+            Card(value, suit) for value in CardValue for suit in CardSuit
+        ]
+        shuffle(self.__cards)
+      
+      
+
+'''
+Credits to Stephen Raunch 
+'''
+
+class CardValue(Enum):
+    Ace = 1
+    Deuce = 2
+    Three = 3
+    Four = 4
+    Five = 5
+    Six = 6
+    Seven = 7
+    Eight = 8
+    Nine = 9
+    Ten = 10
+    Jack = 11
+    Queen = 12
+    King = 13
+
+
+class CardSuit(Enum):
+    Club = 1
+    Heart = 2
+    Diamond = 3
+    Spade = 4
+
+
+class Card(tuple):
+
+    def __new__(cls, value, suit):
+        assert isinstance(value, CardValue)
+        assert isinstance(suit, CardSuit)
+        return tuple.__new__(cls, (value, suit))
+
+    @property
+    def value(self):
+        return self[0]
+
+    @property
+    def suit(self):
+        return self[1]
+
+    def __str__(self):
+        return "{} of {}s".format(self.value.name, self.suit.name)
+
+    def __setattr__(self, *ignored):
+        raise NotImplementedError
+
+    def __delattr__(self, *ignored):
+        raise NotImplementedError
+      
